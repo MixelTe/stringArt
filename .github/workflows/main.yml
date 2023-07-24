@@ -18,6 +18,7 @@ jobs:
       run: |
         npm i typescript
         tsc -p ts/tsconfig.json
+        rm wwwroot/.gitignore
     - name: Deploy with gh-pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
