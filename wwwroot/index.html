@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Empty Project</title>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT Sans|PT Sans Caption|PT Mono">
+	<link rel="stylesheet" type="text/css" href="popup.css">
+	<script src="out/main.js" type="module"></script>
+	<style>
+		body {
+			margin: 0px;
+			min-height: 100%;
+			min-width: calc(500px + 240px + 280px + 32px);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		* {
+			font-family: "PT Sans", Arial, Helvetica, sans-serif;
+		}
+
+		.canvas {
+			flex-shrink: 0;
+			flex-grow: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.canvas div {
+			width: 600px;
+			height: 600px;
+			box-shadow: 0px 0px 20px blue;
+			border-radius: 8px;
+		}
+
+		canvas {
+			image-rendering: pixelated;
+		}
+
+		.bar {
+			flex-shrink: 0;
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			padding: 24px;
+			width: 240px;
+			border-left: 2px solid darkviolet;
+			background-color: rgba(0, 0, 255, 0.15);
+			box-sizing: border-box;
+		}
+		#log {
+			flex-shrink: 0;
+			align-self: stretch;
+			box-sizing: border-box;
+			display: flex;
+			overflow: hidden;
+			flex-direction: column;
+			gap: 2px;
+			width: 0px;
+			max-height: 100vh;
+			overflow-y: scroll;
+			max-width: calc(100% - 500px - 240px - 32px);
+			font-family: "PT Mono", monospace;
+			background-color: #1e1e1e;
+			resize: horizontal;
+		}
+		#log * {
+			position: relative;
+			color: aqua;
+		}
+		#log *::before {
+			content: "";
+			position: absolute;
+			left: -8px;
+			top: 8px;
+			width: 4px;
+			height: 4px;
+			background-color: aqua;
+			border-radius: 50%;
+		}
+		#log .error {
+			color: tomato;
+		}
+		#log:has(*) {
+			padding: 12px;
+			width: 280px;
+		}
+
+		#selectImg {
+			margin-top: 8px;
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+			gap: 4px;
+			background-color: rgba(148, 0, 211, 0.4);
+			padding: 4px;
+			border-radius: 4px;
+		}
+		#selectImg img {
+			width: 100%;
+			border-radius: 4px;
+		}
+	</style>
+</head>
+<body>
+	<div id="log">
+	</div>
+	<div class="canvas">
+		<div>
+			<canvas id="canvas">Canvas</canvas>
+		</div>
+	</div>
+	<div class="bar">
+		<div>
+			<span>Image: </span>
+			<select id="img"></select>
+			<div id="selectImg"></div>
+		</div>
+		<div>
+			<span>Points Count: </span>
+			<input type="range" id="pointsCount" min="16", max="4096" step="16">
+			<span id="pointsCount_display">00</span>
+		</div>
+		<div>
+			<span>Points Offset: </span>
+			<input type="range" id="pointsOffset" min="1", max="2048" step="8">
+			<span id="pointsOffset_display">00</span>
+		</div>
+		<div>
+			<span>Lines Count: </span>
+			<input type="range" id="linesCount" min="16", max="25000" step="64">
+			<span id="linesCount_display">00</span>
+		</div>
+		<div>
+			<span>Line Alpha: </span>
+			<input type="range" id="lineA" min="1", max="255" step="4">
+			<span id="lineA_display">00</span>
+		</div>
+		<div>
+			<span>Size Multiplier: </span>
+			<input type="range" id="sizeMul" min="1", max="3" step="0.1">
+			<span id="sizeMul_display">00</span>
+		</div>
+		<div>
+			<span>Animation Steps Skip: </span>
+			<input type="range" id="animSkipSteps" min="0", max="128" step="1">
+			<span id="animSkipSteps_display">00</span>
+		</div>
+	</div>
+</body>
+</html>
