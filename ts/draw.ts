@@ -109,8 +109,8 @@ export class Painter
 				// line.forEach(p => this.drawPixel(p.x, p.y, 0.2));
 			}
 			console.log(c + ":", maxErrorChange);
-			// if (maxErrorChange < 0)
-			// 	break
+			if (this.stopObj.stopOnZero && maxErrorChange == 0)
+				break
 			f = bestLine.t;
 			bestIndexes.forEach(i =>
 			{
@@ -304,6 +304,7 @@ interface Point
 interface StopObj
 {
 	stop: boolean;
+	stopOnZero: boolean;
 	animSkipSteps: number;
 }
 interface Settings

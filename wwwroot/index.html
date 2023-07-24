@@ -120,17 +120,17 @@
 		</div>
 		<div>
 			<span>Points Count: </span>
-			<input type="range" id="pointsCount" min="16", max="4096" step="16">
+			<input type="range" id="pointsCount" min="16", max="1024" step="16">
 			<span id="pointsCount_display">00</span>
 		</div>
 		<div>
 			<span>Points Offset: </span>
-			<input type="range" id="pointsOffset" min="1", max="2048" step="8">
+			<input type="range" id="pointsOffset" min="1", max="128" step="4">
 			<span id="pointsOffset_display">00</span>
 		</div>
 		<div>
 			<span>Lines Count: </span>
-			<input type="range" id="linesCount" min="16", max="25000" step="64">
+			<input type="range" id="linesCount" min="16", max="64000" step="128">
 			<span id="linesCount_display">00</span>
 		</div>
 		<div>
@@ -145,8 +145,12 @@
 		</div>
 		<div>
 			<span>Animation Steps Skip: </span>
-			<input type="range" id="animSkipSteps" min="0", max="128" step="1">
+			<input type="range" id="animSkipSteps" min="0", max="64" step="1">
 			<span id="animSkipSteps_display">00</span>
+		</div>
+		<div>
+			<input type="checkbox" id="stopOnZero">
+			<label for="stopOnZero">Stop on zero efficiency</label>
 		</div>
 	</div>
 </body>

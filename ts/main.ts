@@ -39,12 +39,16 @@ const inp_animSkipSteps_display = Lib.getEl("animSkipSteps_display", HTMLSpanEle
 inp_animSkipSteps.addEventListener("input", () => inp_animSkipSteps_display.innerText = inp_animSkipSteps.value);
 inp_animSkipSteps.addEventListener("change", () => stopDraw.animSkipSteps = inp_animSkipSteps.valueAsNumber);
 
+const inp_stopOnZero = Lib.get.input("stopOnZero");
+inp_stopOnZero.addEventListener("change", () => stopDraw.stopOnZero = inp_stopOnZero.checked);
+
 inp_pointsCount.value = "100";
 inp_pointsOffset.value = "10";
 inp_linesCount.value = "500";
 inp_lineA.value = "25";
 inp_sizeMul.value = "1";
 inp_animSkipSteps.value = "0";
+inp_stopOnZero.checked = true;
 inp_pointsCount_display.innerText = inp_pointsCount.value
 inp_pointsOffset_display.innerText = inp_pointsOffset.value
 inp_linesCount_display.innerText = inp_linesCount.value
@@ -75,7 +79,7 @@ for (let i = 0; i < imgCount; i++)
 imgSelect.value = "6";
 imgSelect.addEventListener("change", draw);
 
-let stopDraw = { stop: true, animSkipSteps: 0 };
+let stopDraw = { stop: true, animSkipSteps: 0, stopOnZero: true };
 
 async function draw()
 {
@@ -91,7 +95,7 @@ async function draw()
 	const ctx = Lib.canvas.getContext2d(canvas);
 	ctx.translate((w - img.width) / 2, (h - img.height) / 2)
 
-	stopDraw = { stop: false, animSkipSteps: stopDraw.animSkipSteps };
+	stopDraw = { stop: false, animSkipSteps: stopDraw.animSkipSteps, stopOnZero: stopDraw.stopOnZero };
 	await new Painter(ctx, img, stopDraw, {
 		pointsCount: inp_pointsCount.valueAsNumber,
 		pointsOffset: inp_pointsOffset.valueAsNumber,
