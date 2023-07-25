@@ -85,8 +85,6 @@ async function draw()
 {
 	if (!stopDraw.stop) stopDraw.stop = true;
 	if (!imgsLoaded) return;
-	canvas.width = 0;
-	canvas.height = 0;
 	Lib.canvas.fitToParent.ClientWH(canvas);
 	const img = imgs[parseInt(imgSelect.value, 10)];
 	const w = canvas.width;

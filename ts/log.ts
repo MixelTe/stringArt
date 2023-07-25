@@ -1,6 +1,7 @@
 import { Div, getDiv } from "./littleLib.js";
 
 const log = getDiv("log");
+const log_errors = getDiv("log_errors");
 console.log = Log;
 console.error = LogError;
 addEventListener("error", e => onError(e.message, `${e.filename}:${e.lineno}:${e.colno}`));
@@ -14,8 +15,8 @@ export function Log(...data: any[])
 
 export function LogError(...data: any[])
 {
-	log.appendChild(Div("error", [], data.join(" ")))
-	log.scroll(0, log.scrollHeight);
+	log_errors.appendChild(Div("error", [], data.join(" ")))
+	log_errors.scroll(0, log.scrollHeight);
 }
 
 function onError(msg: string, path?: string)

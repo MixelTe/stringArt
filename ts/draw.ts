@@ -74,7 +74,6 @@ export class Painter
 	private async genLines()
 	{
 		const data = this.getImgData();
-		if (!data) return [];
 		const dataCur = new Uint8ClampedArray(data.length);
 
 		// for (let i = 0; i < data.length; i++)
@@ -224,7 +223,7 @@ export class Painter
 	{
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
-		if (!ctx) return;
+		if (!ctx) throw new Error("ctx is null");
 		canvas.width = this.size;
 		canvas.height = this.size;
 		ctx.drawImage(this.img, 0, 0);
