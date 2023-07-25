@@ -43,6 +43,10 @@ inp_animSkipSteps.addEventListener("change", () => controlObj.animSkipSteps = in
 const inp_stopOnZero = Lib.get.input("stopOnZero");
 inp_stopOnZero.addEventListener("change", () => controlObj.stopOnZero = inp_stopOnZero.checked);
 
+const inp_imgfile = Lib.get.input("imgfile");
+inp_imgfile.addEventListener("change", loadCustomImg);
+
+
 inp_pointsCount.value = "100";
 inp_pointsOffset.value = "10";
 inp_linesCount.value = "500";
@@ -60,6 +64,8 @@ inp_animSkipSteps_display.innerText = inp_animSkipSteps.value
 
 const imgSelect = Lib.getEl("img", HTMLSelectElement);
 const selectImg = Lib.get.div("selectImg");
+let useCustomImg = false;
+let customImg: ImageBitmap;
 
 for (let i = 0; i < imgCount; i++)
 {
@@ -78,7 +84,7 @@ for (let i = 0; i < imgCount; i++)
 	selectImg.appendChild(img);
 }
 imgSelect.value = "6";
-imgSelect.addEventListener("change", draw);
+imgSelect.addEventListener("change", () => { useCustomImg = false; draw(); });
 
 let controlObj = { stop: true, animSkipSteps: 0, stopOnZero: true, animateLine };
 let canvasTranslate = { x: 0, y: 0 };
@@ -89,7 +95,7 @@ async function draw()
 	if (!controlObj.stop) controlObj.stop = true;
 	if (!imgsLoaded) return;
 	Lib.canvas.fitToParent.ClientWH(canvas);
-	const img = imgs[parseInt(imgSelect.value, 10)];
+	const img = useCustomImg && customImg ? customImg : imgs[parseInt(imgSelect.value, 10)];
 	const w = canvas.width;
 	const h = canvas.height;
 
@@ -141,4 +147,23 @@ function loadImgs()
 			});
 		}
 	}
+}
+
+function loadCustomImg()
+{
+	const file = inp_imgfile.files?.[0];
+	if (!file) return;
+
+	const img = new Image();
+	img.onload = () =>
+	{
+		URL.revokeObjectURL(img.src);
+		createImageBitmap(img).then(sprite =>
+		{
+			customImg = sprite;
+			useCustomImg = true;
+			draw();
+		});
+	};
+	img.src = URL.createObjectURL(file);
 }

@@ -5,14 +5,16 @@ export class Painter
 	private LinesCount = 5000;
 	private LineA = 10;
 
-	private size: number;
+	private width: number;
+	private height: number;
 	private circleR: number;
 	private circleStep: number;
 
 	constructor(private ctx: CanvasRenderingContext2D, private img: ImageBitmap, private controlObj: ControlObj, settings?: Settings)
 	{
-		this.size = img.width;
-		this.circleR = Math.floor(this.size / 2 * (1 + Math.SQRT2) / 2);
+		this.width = img.width;
+		this.height = img.height;
+		this.circleR = Math.floor(Math.max(this.width, this.height) / 2 * (1 + Math.SQRT2) / 2);
 
 		this.PointsCount = settings?.pointsCount ?? this.PointsCount;
 		this.PointsOffset = settings?.pointsOffset ?? this.PointsOffset;
@@ -36,7 +38,7 @@ export class Painter
 	{
 		this.ctx.strokeStyle = "blue";
 		this.ctx.lineWidth = 0.1;
-		this.ctx.strokeRect(-1, -1, this.size + 2, this.size + 2);
+		this.ctx.strokeRect(-1, -1, this.width + 2, this.height + 2);
 	}
 
 	private drawCircle()
@@ -68,7 +70,7 @@ export class Painter
 	}
 	private getPointAtCircle(i: number, rmul = 1)
 	{
-		return getPointAtCircle(this.circleStep * i, this.circleR * rmul, this.size / 2, this.size / 2)
+		return getPointAtCircle(this.circleStep * i, this.circleR * rmul, this.width / 2, this.height / 2);
 	}
 
 	private async genLines()
@@ -199,8 +201,8 @@ export class Painter
 			// .filter(p => p.x >= 0 && p.x < this.size && p.y >= 0 && p.y < this.size)
 			// .map(p => p.y * this.size + p.x);
 			.map(p =>
-				(p.x >= 0 && p.x < this.size && p.y >= 0 && p.y < this.size)
-					? p.y * this.size + p.x
+				(p.x >= 0 && p.x < this.width && p.y >= 0 && p.y < this.height)
+					? p.y * this.width + p.x
 					: -1);
 	}
 
@@ -231,10 +233,10 @@ export class Painter
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 		if (!ctx) throw new Error("ctx is null");
-		canvas.width = this.size;
-		canvas.height = this.size;
+		canvas.width = this.width;
+		canvas.height = this.height;
 		ctx.drawImage(this.img, 0, 0);
-		const data = ctx.getImageData(0, 0, this.size, this.size).data;
+		const data = ctx.getImageData(0, 0, this.width, this.height).data;
 		const dataNew = new Uint8ClampedArray(data.length / 4);
 		for (let i = 0; i < data.length / 4; i++)
 		{
