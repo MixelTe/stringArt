@@ -2,6 +2,7 @@ import "./log.js";
 import { Painter, Point } from "./draw.js";
 import * as Lib from "./littleLib.js";
 import { clearLog } from "./log.js";
+import { ImageCroper } from "./imageCroper.js";
 
 const canvas = Lib.get.canvas("canvas");
 
@@ -160,9 +161,13 @@ function loadCustomImg()
 		URL.revokeObjectURL(img.src);
 		createImageBitmap(img).then(sprite =>
 		{
-			customImg = sprite;
-			useCustomImg = true;
-			draw();
+			new ImageCroper(sprite, croped =>
+			{
+				if (!croped) return;
+				customImg = croped;
+				useCustomImg = true;
+				draw();
+			}).crop();
 		});
 	};
 	img.src = URL.createObjectURL(file);
