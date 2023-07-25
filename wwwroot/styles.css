@@ -29,7 +29,7 @@ canvas {
 	image-rendering: pixelated;
 }
 
-.bar {
+.bar, .currentImage {
 	z-index: 2;
 	right: 48px;
 	top: 50%;
@@ -52,14 +52,14 @@ canvas {
 		rgba(0, 0, 0, 0.23) -2px -2px 6px -2px;
 	transition: box-shadow 250ms;
 }
-.bar:hover {
+.bar:hover, .currentImage:hover {
 	box-shadow:  rgba(0, 0, 0, 0.31) 0px 0px 80px -10px,
 		rgba(0, 0, 0, 0.32) 4px 16px 18px -5px,
 		rgba(255, 255, 255, 0.5) -4px -4px 7px -4px inset,
 		rgba(0, 0, 0, 0.23) -2px -2px 6px -4px;
 }
 .log {
-	z-index: 2;
+	z-index: 4;
 	left: -280px;
 	bottom: 0;
 	top: 0;
@@ -271,4 +271,20 @@ canvas {
 	box-shadow: rgba(255, 255, 255, 0.5) 4px 4px 7px -2px inset,
 				rgba(0, 0, 0, 0.23) 2px 2px 6px -1px;
 
+}
+
+.currentImage {
+	left: 32px;
+	bottom: 32px;
+	transform: none;
+	top: auto;
+	padding: 24px;
+	width: fit-content;
+}
+#currentImage {
+	max-width: 190px;
+	max-height: 300px;
+	width: fit-content;
+	height: fit-content;
+	border-radius: 8px;
 }

@@ -87,10 +87,13 @@ for (let i = 0; i < imgCount; i++)
 imgSelect.value = "6";
 imgSelect.addEventListener("change", () => { useCustomImg = false; draw(); });
 
+const currentImage = Lib.get.canvas("currentImage");
+const currentImageCtx = Lib.canvas.getContext2d(currentImage);
+
 let controlObj = { stop: true, animSkipSteps: 0, stopOnZero: true, animateLine };
 let canvasTranslate = { x: 0, y: 0 };
 
-async function draw()
+function draw()
 {
 	clearLog();
 	if (!controlObj.stop) controlObj.stop = true;
@@ -100,12 +103,16 @@ async function draw()
 	const w = canvas.width;
 	const h = canvas.height;
 
+	currentImage.width = img.width;
+	currentImage.height = img.height;
+	currentImageCtx.drawImage(img, 0, 0);
+
 	const ctx = Lib.canvas.getContext2d(canvas);
 	canvasTranslate = { x: (w - img.width) / 2, y: (h - img.height) / 2 };
 	ctx.translate(canvasTranslate.x, canvasTranslate.y);
 
 	controlObj = { stop: false, animSkipSteps: controlObj.animSkipSteps, stopOnZero: controlObj.stopOnZero, animateLine };
-	await new Painter(ctx, img, controlObj, {
+	new Painter(ctx, img, controlObj, {
 		pointsCount: inp_pointsCount.valueAsNumber,
 		pointsOffset: inp_pointsOffset.valueAsNumber,
 		linesCount: inp_linesCount.valueAsNumber,
@@ -153,6 +160,7 @@ function loadImgs()
 function loadCustomImg()
 {
 	const file = inp_imgfile.files?.[0];
+	inp_imgfile.value = "";
 	if (!file) return;
 
 	const img = new Image();
