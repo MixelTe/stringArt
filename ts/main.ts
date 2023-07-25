@@ -1,6 +1,7 @@
 import "./log.js";
-import { Painter } from "./draw.js";
+import { Painter, Point } from "./draw.js";
 import * as Lib from "./littleLib.js";
+import { clearLog } from "./log.js";
 
 const canvas = Lib.get.canvas("canvas");
 
@@ -37,10 +38,10 @@ inp_sizeMul.addEventListener("change", draw);
 const inp_animSkipSteps = Lib.get.input("animSkipSteps");
 const inp_animSkipSteps_display = Lib.getEl("animSkipSteps_display", HTMLSpanElement);
 inp_animSkipSteps.addEventListener("input", () => inp_animSkipSteps_display.innerText = inp_animSkipSteps.value);
-inp_animSkipSteps.addEventListener("change", () => stopDraw.animSkipSteps = inp_animSkipSteps.valueAsNumber);
+inp_animSkipSteps.addEventListener("change", () => controlObj.animSkipSteps = inp_animSkipSteps.valueAsNumber);
 
 const inp_stopOnZero = Lib.get.input("stopOnZero");
-inp_stopOnZero.addEventListener("change", () => stopDraw.stopOnZero = inp_stopOnZero.checked);
+inp_stopOnZero.addEventListener("change", () => controlObj.stopOnZero = inp_stopOnZero.checked);
 
 inp_pointsCount.value = "100";
 inp_pointsOffset.value = "10";
@@ -54,7 +55,7 @@ inp_pointsOffset_display.innerText = inp_pointsOffset.value
 inp_linesCount_display.innerText = inp_linesCount.value
 inp_lineA_display.innerText = inp_lineA.value
 inp_sizeMul_display.innerText = inp_sizeMul.value
-inp_animSkipSteps.innerText = inp_animSkipSteps.value
+inp_animSkipSteps_display.innerText = inp_animSkipSteps.value
 
 
 const imgSelect = Lib.getEl("img", HTMLSelectElement);
@@ -79,11 +80,13 @@ for (let i = 0; i < imgCount; i++)
 imgSelect.value = "6";
 imgSelect.addEventListener("change", draw);
 
-let stopDraw = { stop: true, animSkipSteps: 0, stopOnZero: true };
+let controlObj = { stop: true, animSkipSteps: 0, stopOnZero: true, animateLine };
+let canvasTranslate = { x: 0, y: 0 };
 
 async function draw()
 {
-	if (!stopDraw.stop) stopDraw.stop = true;
+	clearLog();
+	if (!controlObj.stop) controlObj.stop = true;
 	if (!imgsLoaded) return;
 	Lib.canvas.fitToParent.ClientWH(canvas);
 	const img = imgs[parseInt(imgSelect.value, 10)];
@@ -91,16 +94,28 @@ async function draw()
 	const h = canvas.height;
 
 	const ctx = Lib.canvas.getContext2d(canvas);
-	ctx.translate((w - img.width) / 2, (h - img.height) / 2)
+	canvasTranslate = { x: (w - img.width) / 2, y: (h - img.height) / 2 };
+	ctx.translate(canvasTranslate.x, canvasTranslate.y);
 
-	stopDraw = { stop: false, animSkipSteps: stopDraw.animSkipSteps, stopOnZero: stopDraw.stopOnZero };
-	await new Painter(ctx, img, stopDraw, {
+	controlObj = { stop: false, animSkipSteps: controlObj.animSkipSteps, stopOnZero: controlObj.stopOnZero, animateLine };
+	await new Painter(ctx, img, controlObj, {
 		pointsCount: inp_pointsCount.valueAsNumber,
 		pointsOffset: inp_pointsOffset.valueAsNumber,
 		linesCount: inp_linesCount.valueAsNumber,
 		lineA: inp_lineA.valueAsNumber,
 		sizeMul: inp_sizeMul.valueAsNumber,
 	}).draw();
+}
+
+const lineAnim1 = Lib.get.div("lineAnim1");
+const lineAnim2 = Lib.get.div("lineAnim2");
+
+function animateLine(s: Point, e: Point)
+{
+	lineAnim1.style.left = `${s.x + canvasTranslate.x}px`
+	lineAnim1.style.top = `${s.y + canvasTranslate.y}px`
+	lineAnim2.style.left = `${e.x + canvasTranslate.x}px`
+	lineAnim2.style.top = `${e.y + canvasTranslate.y}px`
 }
 
 function loadImgs()

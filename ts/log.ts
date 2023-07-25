@@ -7,16 +7,21 @@ console.error = LogError;
 addEventListener("error", e => onError(e.message, `${e.filename}:${e.lineno}:${e.colno}`));
 addEventListener("unhandledrejection", e => onError("(in promise) " + e.reason));
 
-export function Log(...data: any[])
+function Log(...data: any[])
 {
 	log.appendChild(Div([], [], data.join(" ")));
 	log.scroll(0, log.scrollHeight);
 }
 
-export function LogError(...data: any[])
+function LogError(...data: any[])
 {
 	log_errors.appendChild(Div("error", [], data.join(" ")))
 	log_errors.scroll(0, log.scrollHeight);
+}
+
+export function clearLog()
+{
+	log.innerHTML = "";
 }
 
 function onError(msg: string, path?: string)

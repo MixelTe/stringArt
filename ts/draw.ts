@@ -9,7 +9,7 @@ export class Painter
 	private circleR: number;
 	private circleStep: number;
 
-	constructor(private ctx: CanvasRenderingContext2D, private img: ImageBitmap, private stopObj: StopObj, settings?: Settings)
+	constructor(private ctx: CanvasRenderingContext2D, private img: ImageBitmap, private controlObj: ControlObj, settings?: Settings)
 	{
 		this.size = img.width;
 		this.circleR = Math.floor(this.size / 2 * (1 + Math.SQRT2) / 2);
@@ -66,9 +66,9 @@ export class Painter
 			this.ctx.stroke();
 		}
 	}
-	private getPointAtCircle(i: number)
+	private getPointAtCircle(i: number, rmul = 1)
 	{
-		return getPointAtCircle(this.circleStep * i, this.circleR, this.size / 2, this.size / 2)
+		return getPointAtCircle(this.circleStep * i, this.circleR * rmul, this.size / 2, this.size / 2)
 	}
 
 	private async genLines()
@@ -108,7 +108,7 @@ export class Painter
 				// line.forEach(p => this.drawPixel(p.x, p.y, 0.2));
 			}
 			console.log(c + ":", maxErrorChange);
-			if (this.stopObj.stopOnZero && maxErrorChange == 0)
+			if (this.controlObj.stopOnZero && maxErrorChange == 0)
 				break
 			f = bestLine.t;
 			bestIndexes.forEach(i =>
@@ -116,9 +116,16 @@ export class Painter
 				if (i >= 0)
 					dataCur[i] = Math.min(dataCur[i] + this.LineA, 255)
 			});
-			const animSkipSteps = this.stopObj.animSkipSteps ?? 0;
-			await this.drawPixels(bestPoints, animSkipSteps == 0 || c % animSkipSteps == 0);
-			if (this.stopObj.stop)
+			const animSkipSteps = this.controlObj.animSkipSteps ?? 0;
+			const anim = animSkipSteps == 0 || c % animSkipSteps == 0;
+			await this.drawPixels(bestPoints, anim);
+			if (anim)
+			{
+				const pf = this.getPointAtCircle(bestLine.f, 1.1);
+				const pt = this.getPointAtCircle(bestLine.t, 1.1);
+				this.controlObj.animateLine(pf, pt);
+			}
+			if (this.controlObj.stop)
 			{
 				console.log("Stop!");
 				return;
@@ -295,16 +302,17 @@ interface Line
 	f: number;
 	t: number;
 }
-interface Point
+export interface Point
 {
 	x: number;
 	y: number;
 }
-interface StopObj
+interface ControlObj
 {
 	stop: boolean;
 	stopOnZero: boolean;
 	animSkipSteps: number;
+	animateLine: (s: Point, e: Point) => void;
 }
 interface Settings
 {
