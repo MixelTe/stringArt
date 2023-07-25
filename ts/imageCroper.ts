@@ -15,8 +15,8 @@ export class ImageCroper
 	constructor(private image: ImageBitmap, onEnd: (img: ImageBitmap | null) => void)
 	{
 		const canvas = document.createElement("canvas");
-		canvas.width = Math.min(600, window.innerWidth - 32);
-		canvas.height = Math.min(400, window.innerHeight - 64);
+		canvas.width = Math.min(800, window.innerWidth - 32);
+		canvas.height = Math.min(800, window.innerHeight - 64);
 		const ctx = canvas.getContext("2d");
 		if (!ctx) throw new Error(`ctx is null`);
 		this.ctx = ctx;

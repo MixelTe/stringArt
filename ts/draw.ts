@@ -109,7 +109,7 @@ export class Painter
 				}
 				// line.forEach(p => this.drawPixel(p.x, p.y, 0.2));
 			}
-			console.log(c + ":", maxErrorChange);
+			// console.log(c + ":", maxErrorChange);
 			if (this.controlObj.stopOnZero && maxErrorChange == 0)
 				break
 			f = bestLine.t;

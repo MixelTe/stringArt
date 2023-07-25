@@ -80,6 +80,7 @@ for (let i = 0; i < imgCount; i++)
 	img.addEventListener("click", () =>
 	{
 		imgSelect.value = `${i}`;
+		useCustomImg = false;
 		draw();
 	})
 	selectImg.appendChild(img);
