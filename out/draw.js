@@ -1,20 +1,22 @@
 export class Painter {
     ctx;
     img;
-    stopObj;
+    controlObj;
     PointsCount = 200;
     PointsOffset = 10;
     LinesCount = 5000;
     LineA = 10;
-    size;
+    width;
+    height;
     circleR;
     circleStep;
-    constructor(ctx, img, stopObj, settings) {
+    constructor(ctx, img, controlObj, settings) {
         this.ctx = ctx;
         this.img = img;
-        this.stopObj = stopObj;
-        this.size = img.width;
-        this.circleR = Math.floor(this.size / 2 * (1 + Math.SQRT2) / 2);
+        this.controlObj = controlObj;
+        this.width = img.width;
+        this.height = img.height;
+        this.circleR = Math.floor(Math.max(this.width, this.height) / 2 * (1 + Math.SQRT2) / 2);
         this.PointsCount = settings?.pointsCount ?? this.PointsCount;
         this.PointsOffset = settings?.pointsOffset ?? this.PointsOffset;
         this.LinesCount = settings?.linesCount ?? this.LinesCount;
@@ -31,7 +33,7 @@ export class Painter {
     drawFrame() {
         this.ctx.strokeStyle = "blue";
         this.ctx.lineWidth = 0.1;
-        this.ctx.strokeRect(-1, -1, this.size + 2, this.size + 2);
+        this.ctx.strokeRect(-1, -1, this.width + 2, this.height + 2);
     }
     drawCircle() {
         this.ctx.fillStyle = "blue";
@@ -55,8 +57,8 @@ export class Painter {
             this.ctx.stroke();
         }
     }
-    getPointAtCircle(i) {
-        return getPointAtCircle(this.circleStep * i, this.circleR, this.size / 2, this.size / 2);
+    getPointAtCircle(i, rmul = 1) {
+        return getPointAtCircle(this.circleStep * i, this.circleR * rmul, this.width / 2, this.height / 2);
     }
     async genLines() {
         const data = this.getImgData();
@@ -88,17 +90,23 @@ export class Painter {
                 }
                 // line.forEach(p => this.drawPixel(p.x, p.y, 0.2));
             }
-            console.log(c + ":", maxErrorChange);
-            if (this.stopObj.stopOnZero && maxErrorChange == 0)
+            // console.log(c + ":", maxErrorChange);
+            if (this.controlObj.stopOnZero && maxErrorChange == 0)
                 break;
             f = bestLine.t;
             bestIndexes.forEach(i => {
                 if (i >= 0)
                     dataCur[i] = Math.min(dataCur[i] + this.LineA, 255);
             });
-            const animSkipSteps = this.stopObj.animSkipSteps ?? 0;
-            await this.drawPixels(bestPoints, animSkipSteps == 0 || c % animSkipSteps == 0);
-            if (this.stopObj.stop) {
+            const animSkipSteps = this.controlObj.animSkipSteps ?? 0;
+            const anim = animSkipSteps == 0 || c % animSkipSteps == 0;
+            await this.drawPixels(bestPoints, anim);
+            if (anim) {
+                const pf = this.getPointAtCircle(bestLine.f, 1.1);
+                const pt = this.getPointAtCircle(bestLine.t, 1.1);
+                this.controlObj.animateLine(pf, pt);
+            }
+            if (this.controlObj.stop) {
                 console.log("Stop!");
                 return;
             }
@@ -152,8 +160,8 @@ export class Painter {
         return line
             // .filter(p => p.x >= 0 && p.x < this.size && p.y >= 0 && p.y < this.size)
             // .map(p => p.y * this.size + p.x);
-            .map(p => (p.x >= 0 && p.x < this.size && p.y >= 0 && p.y < this.size)
-            ? p.y * this.size + p.x
+            .map(p => (p.x >= 0 && p.x < this.width && p.y >= 0 && p.y < this.height)
+            ? p.y * this.width + p.x
             : -1);
     }
     getImageErrorChange(dataImg, dataCur, indexes) {
@@ -179,10 +187,10 @@ export class Painter {
         const ctx = canvas.getContext('2d');
         if (!ctx)
             throw new Error("ctx is null");
-        canvas.width = this.size;
-        canvas.height = this.size;
+        canvas.width = this.width;
+        canvas.height = this.height;
         ctx.drawImage(this.img, 0, 0);
-        const data = ctx.getImageData(0, 0, this.size, this.size).data;
+        const data = ctx.getImageData(0, 0, this.width, this.height).data;
         const dataNew = new Uint8ClampedArray(data.length / 4);
         for (let i = 0; i < data.length / 4; i++) {
             const r = data[i * 4 + 0];
