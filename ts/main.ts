@@ -81,7 +81,7 @@ const startValues = {
 	sizeMul: 1,
 	contrast: 0.05,
 	lightness: 0.05,
-	animSkipSteps: 4,
+	animSkipSteps: 8,
 	fullAnim: true,
 }
 
@@ -132,13 +132,15 @@ for (let i = 0; i < imgCount; i++)
 
 	const img = Lib.initEl("img")
 	img.src = "./images/img_" + (i + 1) + ".png";
-	img.addEventListener("click", () =>
+	const btn = Lib.initEl("button");
+	btn.appendChild(img);
+	btn.addEventListener("click", () =>
 	{
 		imgSelect.value = `${i}`;
 		useCustomImg = false;
 		draw();
-	})
-	selectImg.appendChild(img);
+	});
+	selectImg.appendChild(btn);
 }
 imgSelect.value = "6";
 imgSelect.addEventListener("change", () => { useCustomImg = false; draw(); });

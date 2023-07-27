@@ -65,6 +65,11 @@ export class ImageCroper
 		this.cropArea.y += 25;
 		this.cropArea.w -= 50;
 		this.cropArea.h -= 50;
+
+		const div = document.createElement("div");
+		div.innerText = "Mouse wheel - zoom; Right click - move image";
+		div.style.marginBottom = "8px";
+		this.popup.content.appendChild(div);
 	}
 
 	public crop()

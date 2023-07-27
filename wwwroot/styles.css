@@ -155,6 +155,13 @@ canvas {
 #selectImg:hover {
 	box-shadow: 0px 0px 12px 6px #5100ff63;
 }
+#selectImg button {
+	background-color: transparent;
+	border: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+}
 #selectImg img {
 	width: 100%;
 	border-radius: 4px;
@@ -201,7 +208,6 @@ canvas {
 input[type="range"], .rangeInput {
 	-webkit-appearance: none;
 	appearance: none;
-	outline: none;
 	width: 100%;
 	height: 6px;
 	background: rgb(168, 253, 253);
@@ -236,6 +242,39 @@ input[type="range"]::-moz-range-thumb, .rangeInput::-moz-range-thumb {
 	background: #04AA6D;
 	cursor: pointer;
 }
+input[type="checkbox"] {
+	appearance: none;
+	background-color: rgb(168, 253, 253);
+	margin: 0;
+	font: inherit;
+	color: currentColor;
+	width: 1.15em;
+	height: 1.15em;
+	border: 0.1em solid blue;
+	border-radius: 0.2em;
+	transform: translateY(-0.075em);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-self: end;
+	transition: opacity 200ms;
+	opacity: 0.7;
+}
+input[type="checkbox"]:hover, input[type="checkbox"]:focus-visible {
+	opacity: 1;
+}
+input[type="checkbox"]::before {
+	content: "";
+	width: 50%;
+	height: 50%;
+	border-radius: 0.1em;
+	transform: scale(0) rotate(0deg);
+	transition: 120ms transform ease-in-out;
+	background-color: blue;
+}
+input[type="checkbox"]:checked::before {
+	transform: scale(1) rotate(135deg);
+}
 .inputs {
 	display: grid;
 	gap: 8px 16px;
@@ -266,16 +305,18 @@ input[type="range"]::-moz-range-thumb, .rangeInput::-moz-range-thumb {
 	display: none;
 }
 
-.imgfile label {
+.imgfile button {
 	padding: 4px 12px;
+	border: none;
 	border-radius: 6px;
+	font-size: 16px;
 	cursor: pointer;
 	background-color: rgba(81, 0, 255, 0.2);
 	box-shadow: rgba(255, 255, 255, 0.5) 4px 4px 7px -3px inset,
 				rgba(0, 0, 0, 0.23) 2px 2px 6px -2px;
 	transition: box-shadow 200ms, background-color 200ms;
 }
-.imgfile label:hover, .imgfile label:focus-visible {
+.imgfile button:hover, .imgfile button:focus-visible {
 	background-color: rgba(81, 0, 255, 0.3);
 	box-shadow: rgba(255, 255, 255, 0.5) 4px 4px 7px -2px inset,
 				rgba(0, 0, 0, 0.23) 2px 2px 6px -1px;
