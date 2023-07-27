@@ -1,5 +1,5 @@
 import "./log.js";
-import { Painter, Point } from "./draw.js";
+import { Painter, Point } from "./painter.js";
 import * as Lib from "./littleLib.js";
 import { clearLog } from "./log.js";
 import { ImageCroper } from "./imageCroper.js";
