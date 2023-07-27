@@ -5,7 +5,7 @@ body {
 	background: radial-gradient(at 35% 95%, rgba(0,249,255,0.3) 0%, transparent 26%),
 	radial-gradient(at 90% 60%, rgba(61,255,56,0.22) 0%, transparent 26%),
 	radial-gradient(at 10% 10%, rgba(56,125,255,0.32) 0%, rgba(0,0,0,0) 33%),
-	linear-gradient(253deg, #cefff6 0%, rgba(214,242,255,1) 97%, #d6fcff 100%);
+	linear-gradient(253deg, #cefff6 0%, #d6f2ff 100%);
 }
 * {
 	font-family: "PT Sans", Arial, Helvetica, sans-serif;
@@ -82,7 +82,7 @@ canvas {
 	box-shadow: 0px 0px 0px 0px #000000a8;
 	transition: left 150ms, box-shadow 150ms;
 }
-.log::before {
+.log::before, .gh_link {
 	content: "</>";
 	font-size: 16px;
 	position: fixed;
@@ -140,6 +140,21 @@ canvas {
 	background-color: aqua;
 }
 
+.gh_link {
+	z-index: 2;
+	left: 64px;
+	box-shadow: 0 0 0 0 white;
+	transition: box-shadow 250ms;
+	cursor: pointer;
+}
+.gh_link:hover {
+	box-shadow: 0 0 1px 2px white;
+}
+.gh_link img {
+	width: 60%;
+	height: 60%;
+}
+
 #selectImg {
 	margin-top: 8px;
 	aspect-ratio: 1;
@@ -154,6 +169,13 @@ canvas {
 }
 #selectImg:hover {
 	box-shadow: 0px 0px 12px 6px #5100ff63;
+}
+#selectImg button {
+	background-color: transparent;
+	border: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
 }
 #selectImg img {
 	width: 100%;
@@ -179,6 +201,9 @@ canvas {
 #lineAnim2 {
 	background-color: orange;
 }
+#lineAnim3 {
+	background-color: purple;
+}
 
 .input div:last-child {
 	display: grid;
@@ -198,7 +223,6 @@ canvas {
 input[type="range"], .rangeInput {
 	-webkit-appearance: none;
 	appearance: none;
-	outline: none;
 	width: 100%;
 	height: 6px;
 	background: rgb(168, 253, 253);
@@ -233,6 +257,39 @@ input[type="range"]::-moz-range-thumb, .rangeInput::-moz-range-thumb {
 	background: #04AA6D;
 	cursor: pointer;
 }
+input[type="checkbox"] {
+	appearance: none;
+	background-color: rgb(168, 253, 253);
+	margin: 0;
+	font: inherit;
+	color: currentColor;
+	width: 1.15em;
+	height: 1.15em;
+	border: 0.1em solid blue;
+	border-radius: 0.2em;
+	transform: translateY(-0.075em);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-self: end;
+	transition: opacity 200ms;
+	opacity: 0.7;
+}
+input[type="checkbox"]:hover, input[type="checkbox"]:focus-visible {
+	opacity: 1;
+}
+input[type="checkbox"]::before {
+	content: "";
+	width: 50%;
+	height: 50%;
+	border-radius: 0.1em;
+	transform: scale(0) rotate(0deg);
+	transition: 120ms transform ease-in-out;
+	background-color: blue;
+}
+input[type="checkbox"]:checked::before {
+	transform: scale(1) rotate(135deg);
+}
 .inputs {
 	display: grid;
 	gap: 8px 16px;
@@ -263,16 +320,18 @@ input[type="range"]::-moz-range-thumb, .rangeInput::-moz-range-thumb {
 	display: none;
 }
 
-.imgfile label {
+.imgfile button {
 	padding: 4px 12px;
+	border: none;
 	border-radius: 6px;
+	font-size: 16px;
 	cursor: pointer;
 	background-color: rgba(81, 0, 255, 0.2);
 	box-shadow: rgba(255, 255, 255, 0.5) 4px 4px 7px -3px inset,
 				rgba(0, 0, 0, 0.23) 2px 2px 6px -2px;
 	transition: box-shadow 200ms, background-color 200ms;
 }
-.imgfile label:hover, .imgfile label:focus-visible {
+.imgfile button:hover, .imgfile button:focus-visible {
 	background-color: rgba(81, 0, 255, 0.3);
 	box-shadow: rgba(255, 255, 255, 0.5) 4px 4px 7px -2px inset,
 				rgba(0, 0, 0, 0.23) 2px 2px 6px -1px;
