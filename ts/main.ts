@@ -41,6 +41,11 @@ const inp_contrast_display = Lib.getEl("contrast_display", HTMLSpanElement);
 inp_contrast.addEventListener("input", () => inp_contrast_display.innerText = inp_contrast.value);
 inp_contrast.addEventListener("change", draw);
 
+const inp_lightness = Lib.get.input("lightness");
+const inp_lightness_display = Lib.getEl("lightness_display", HTMLSpanElement);
+inp_lightness.addEventListener("input", () => inp_lightness_display.innerText = inp_lightness.value);
+inp_lightness.addEventListener("change", draw);
+
 const inp_animSkipSteps = Lib.get.input("animSkipSteps");
 const inp_animSkipSteps_display = Lib.getEl("animSkipSteps_display", HTMLSpanElement);
 inp_animSkipSteps.addEventListener("input", () => inp_animSkipSteps_display.innerText = inp_animSkipSteps.value);
@@ -59,10 +64,11 @@ const startValues = {
 	lineA: 16,
 	sizeMul: 1,
 	contrast: 0.05,
+	lightness: 0.05,
 	animSkipSteps: 0,
 }
 
-const testing = true;
+const testing = false;
 const testingValues = {
 	pointsCount: 256,
 	pointsOffset: 16,
@@ -70,6 +76,7 @@ const testingValues = {
 	lineA: 8,
 	sizeMul: 1,
 	contrast: 0.05,
+	lightness: 0.05,
 	animSkipSteps: 99999,
 }
 
@@ -79,15 +86,17 @@ inp_linesCount.value = `${startValues.linesCount}`;
 inp_lineA.value = `${startValues.lineA}`;
 inp_sizeMul.value = `${startValues.sizeMul}`;
 inp_contrast.value = `${startValues.contrast}`;
+inp_lightness.value = `${startValues.lightness}`;
 inp_animSkipSteps.value = `${startValues.animSkipSteps}`;
 inp_stopOnZero.checked = true;
-inp_pointsCount_display.innerText = inp_pointsCount.value
-inp_pointsOffset_display.innerText = inp_pointsOffset.value
-inp_linesCount_display.innerText = inp_linesCount.value
-inp_lineA_display.innerText = inp_lineA.value
-inp_sizeMul_display.innerText = inp_sizeMul.value
-inp_contrast_display.innerText = inp_contrast.value
-inp_animSkipSteps_display.innerText = inp_animSkipSteps.value
+inp_pointsCount_display.innerText = inp_pointsCount.value;
+inp_pointsOffset_display.innerText = inp_pointsOffset.value;
+inp_linesCount_display.innerText = inp_linesCount.value;
+inp_lineA_display.innerText = inp_lineA.value;
+inp_sizeMul_display.innerText = inp_sizeMul.value;
+inp_contrast_display.innerText = inp_contrast.value;
+inp_lightness_display.innerText = inp_lightness.value;
+inp_animSkipSteps_display.innerText = inp_animSkipSteps.value;
 
 
 const imgSelect = Lib.getEl("img", HTMLSelectElement);
@@ -228,16 +237,18 @@ async function applyFilterToImage(image: ImageBitmap): Promise<ImageBitmap>
 		ctx.drawImage(image, 0, 0);
 		const img = ctx.getImageData(0, 0, image.width, image.height);
 
+		const L = inp_lightness.valueAsNumber * 1.5;
 		const unlinear = (v: number) => v;
 		const C = unlinear(inp_contrast.valueAsNumber) * 255;
 		const F = 259 * (C + 255) / (255 * (259 - C));
 
-		const contrast = (v: number) => Math.min(Math.max(Math.round(F * (v - 128) + 128), 0), 255);
+		const effect = (v: number) => (F * (v - 128) + 128) * (L + 1);
+		const normalize = (v: number) => Math.min(Math.max(Math.round(v), 0), 255);
 		for (let i = 0; i < img.data.length / 4; i++)
 		{
-			img.data[i * 4 + 0] = contrast(img.data[i * 4 + 0]);
-			img.data[i * 4 + 1] = contrast(img.data[i * 4 + 1]);
-			img.data[i * 4 + 2] = contrast(img.data[i * 4 + 2]);
+			img.data[i * 4 + 0] = normalize(effect(img.data[i * 4 + 0]));
+			img.data[i * 4 + 1] = normalize(effect(img.data[i * 4 + 1]));
+			img.data[i * 4 + 2] = normalize(effect(img.data[i * 4 + 2]));
 		}
 		createImageBitmap(img).then(bitmap => res(bitmap));
 	});
