@@ -44,7 +44,7 @@ inp_stopOnZero.addEventListener("change", () => controlObj.stopOnZero = inp_stop
 const inp_anim = Lib.get.input("anim");
 inp_anim.addEventListener("change", () => {
     controlObj.fullAnim = inp_anim.checked;
-    inp_animSkipSteps.max = controlObj.fullAnim ? "16" : "32";
+    inp_animSkipSteps.max = controlObj.fullAnim ? "16" : "64";
     const past = controlObj.animSkipSteps;
     controlObj.animSkipSteps = animSkipSteps_past;
     inp_animSkipSteps.valueAsNumber = animSkipSteps_past;
