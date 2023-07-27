@@ -36,6 +36,11 @@ const inp_sizeMul_display = Lib.getEl("sizeMul_display", HTMLSpanElement);
 inp_sizeMul.addEventListener("input", () => inp_sizeMul_display.innerText = inp_sizeMul.value);
 inp_sizeMul.addEventListener("change", draw);
 
+const inp_contrast = Lib.get.input("contrast");
+const inp_contrast_display = Lib.getEl("contrast_display", HTMLSpanElement);
+inp_contrast.addEventListener("input", () => inp_contrast_display.innerText = inp_contrast.value);
+inp_contrast.addEventListener("change", draw);
+
 const inp_animSkipSteps = Lib.get.input("animSkipSteps");
 const inp_animSkipSteps_display = Lib.getEl("animSkipSteps_display", HTMLSpanElement);
 inp_animSkipSteps.addEventListener("input", () => inp_animSkipSteps_display.innerText = inp_animSkipSteps.value);
@@ -53,6 +58,7 @@ inp_pointsOffset.value = "10";
 inp_linesCount.value = "500";
 inp_lineA.value = "25";
 inp_sizeMul.value = "1";
+inp_contrast.value = "0.05";
 inp_animSkipSteps.value = "0";
 inp_stopOnZero.checked = true;
 inp_pointsCount_display.innerText = inp_pointsCount.value
@@ -60,6 +66,7 @@ inp_pointsOffset_display.innerText = inp_pointsOffset.value
 inp_linesCount_display.innerText = inp_linesCount.value
 inp_lineA_display.innerText = inp_lineA.value
 inp_sizeMul_display.innerText = inp_sizeMul.value
+inp_contrast_display.innerText = inp_contrast.value
 inp_animSkipSteps_display.innerText = inp_animSkipSteps.value
 
 
@@ -99,7 +106,8 @@ async function draw()
 	if (!controlObj.stop) controlObj.stop = true;
 	if (!imgsLoaded) return;
 	Lib.canvas.fitToParent.ClientWH(canvas);
-	const img = useCustomImg && customImg ? customImg : imgs[parseInt(imgSelect.value, 10)];
+	let img = useCustomImg && customImg ? customImg : imgs[parseInt(imgSelect.value, 10)];
+	img = await applyFilterToImage(img);
 	const w = canvas.width;
 	const h = canvas.height;
 
@@ -181,4 +189,31 @@ function loadCustomImg()
 		});
 	};
 	img.src = URL.createObjectURL(file);
+}
+
+async function applyFilterToImage(image: ImageBitmap): Promise<ImageBitmap>
+{
+	return new Promise(res =>
+	{
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		if (!ctx) throw new Error("ctx is null");
+		canvas.width = image.width;
+		canvas.height = image.height;
+		ctx.drawImage(image, 0, 0);
+		const img = ctx.getImageData(0, 0, image.width, image.height);
+
+		const unlinear = (v: number) => v;
+		const C = unlinear(inp_contrast.valueAsNumber) * 255;
+		const F = 259 * (C + 255) / (255 * (259 - C));
+
+		const contrast = (v: number) => Math.min(Math.max(Math.round(F * (v - 128) + 128), 0), 255);
+		for (let i = 0; i < img.data.length / 4; i++)
+		{
+			img.data[i * 4 + 0] = contrast(img.data[i * 4 + 0]);
+			img.data[i * 4 + 1] = contrast(img.data[i * 4 + 1]);
+			img.data[i * 4 + 2] = contrast(img.data[i * 4 + 2]);
+		}
+		createImageBitmap(img).then(bitmap => res(bitmap));
+	});
 }
