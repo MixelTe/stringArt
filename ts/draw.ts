@@ -64,8 +64,9 @@ export class Painter
 		// for (let i = 0; i < data.length; i++)
 		// {
 		// 	const v = 1 - data[i] / 255;
-		// 	this.drawPixel(i % this.size, Math.floor(i / this.size), v / 4);
+		// 	this.drawPixel(i % this.width, Math.floor(i / this.width), v);
 		// }
+		// return
 
 		// let f = randomInt(0, this.PointsCount);
 		let f = 75;
@@ -227,7 +228,7 @@ export class Painter
 			const g = data[i * 4 + 1];
 			const b = data[i * 4 + 2];
 			const a = data[i * 4 + 3];
-			const light = Math.min(Math.round((0.299 * r + 0.587 * g + 0.114 * b) * a / 255), 255);
+			const light = Math.min(Math.round((0.299 * r + 0.587 * g + 0.114 * b) + (255 - a)), 255);
 			dataNew[i] = light;
 		}
 		return dataNew;
