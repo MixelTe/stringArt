@@ -65,6 +65,8 @@ inp_anim.addEventListener("change", () =>
 	inp_animSkipSteps.valueAsNumber = animSkipSteps_past;
 	inp_animSkipSteps_display.innerText = inp_animSkipSteps.value;
 	animSkipSteps_past = past;
+
+	setTimeout(() => lineAnim3.style.opacity = "0", 100);
 });
 let animSkipSteps_past = 0;
 
@@ -167,6 +169,8 @@ async function draw()
 
 	const ctx = Lib.canvas.getContext2d(canvas);
 	canvasTranslate = { x: (w - img.width) / 2, y: (h - img.height) / 2 };
+	canvasTranslate.x = Math.round(canvasTranslate.x);
+	canvasTranslate.y = Math.round(canvasTranslate.y);
 	ctx.translate(canvasTranslate.x, canvasTranslate.y);
 
 	controlObj = { stop: false, animSkipSteps: controlObj.animSkipSteps, fullAnim: inp_anim.checked, stopOnZero: controlObj.stopOnZero, animateLine, animatePen };
@@ -180,6 +184,7 @@ async function draw()
 		lineA: inp_lineA.valueAsNumber,
 		sizeMul: inp_sizeMul.valueAsNumber,
 	}).draw();
+	lineAnim3.style.opacity = "0";
 	console.log("Time:", +new Date() - +ts, "ms");
 }
 
@@ -199,7 +204,6 @@ function animatePen(p: Point)
 	lineAnim3.style.opacity = "1";
 	lineAnim3.style.left = `${p.x + canvasTranslate.x}px`;
 	lineAnim3.style.top = `${p.y + canvasTranslate.y}px`;
-	setTimeout(() => lineAnim3.style.opacity = "0", 0);
 }
 
 function loadImgs()

@@ -74,6 +74,7 @@ export class Painter
 		let c = 0;
 		// let t = 0;
 		// for (let i = t; i < 16; i++)
+		let lastTry = false;
 		for (let i = 0; i < this.LinesCount; i++)
 		{
 			c++;
@@ -97,9 +98,18 @@ export class Painter
 				// line.forEach(p => this.drawPixel(p.x, p.y, 0.2));
 			}
 			// console.log(c + ":", maxErrorChange);
-			if (this.controlObj.stopOnZero && maxErrorChange == 0)
-				break
 			f = bestLine.t;
+			if (this.controlObj.stopOnZero && maxErrorChange < 0.1)
+			{
+				if (lastTry)
+					break;
+				lastTry = true;
+				f = Math.round(f + this.PointsCount / 4);
+			}
+			else
+			{
+				lastTry = false;
+			}
 			bestIndexes.forEach(i =>
 			{
 				if (i >= 0)
@@ -113,7 +123,7 @@ export class Painter
 				const pt = this.getPointAtCircle(bestLine.t, 1.1);
 				this.controlObj.animateLine(pf, pt);
 			}
-			await this.drawPixels(bestPoints, anim);
+			await this.drawPixels(dataCur, bestPoints, bestIndexes, anim);
 			if (this.controlObj.stop)
 			{
 				console.log("Stop!");
@@ -198,14 +208,23 @@ export class Painter
 		this.ctx.restore();
 	}
 
-	private async drawPixels(pixels: Point[], anim = true)
+	private async drawPixels(dataCur: Uint8ClampedArray, pixels: Point[], indexes: number[], anim = true)
 	{
 		this.ctx.save();
-		this.ctx.globalAlpha = this.LineA / 255;
-		this.ctx.fillStyle = "black";
-		for (let i = 0; i < pixels.length; i++)
+		for (let i = 0; i < indexes.length; i++)
 		{
+			const index = indexes[i];
 			const pixel = pixels[i];
+			if (index > 0)
+			{
+				this.ctx.clearRect(pixel.x, pixel.y, 1, 1);
+				this.ctx.globalAlpha = dataCur[index] / 255;
+			}
+			else
+			{
+				this.ctx.globalAlpha = this.LineA / 255;
+			}
+			this.ctx.fillStyle = "black";
 			this.ctx.fillRect(pixel.x, pixel.y, 1, 1);
 
 			if (this.controlObj.fullAnim)
