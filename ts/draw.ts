@@ -69,9 +69,11 @@ export class Painter
 		// }
 		// return
 
-		// let f = randomInt(0, this.PointsCount);
-		let f = 75;
+		let f = randomInt(0, this.PointsCount);
+		// let f = 15;
 		let c = 0;
+		// let t = 0;
+		// for (let i = t; i < 16; i++)
 		for (let i = 0; i < this.LinesCount; i++)
 		{
 			c++;
@@ -121,63 +123,15 @@ export class Painter
 		console.log("Lines:", c);
 	}
 
-	private createLine(f: number, t: number)
+	private createLine(f: number, t: number) : Point[]
 	{
 		const p1 = this.getPointAtCircle(f);
 		const p2 = this.getPointAtCircle(t);
-
-		const k = (p2.y - p1.y) / (p2.x - p1.x);
-		const b = p1.y - k * p1.x;
-		const Y = (x: number) => k * x + b;
-		const X = isFinite(k) ? (y: number) => (y - b) / k : (y: number) => p1.x;
-
-		const points: Point[] = [];
-		const pointsY: Point[] = [];
-		for (let x = Math.round(Math.min(p1.x, p2.x)); x <= Math.max(p1.x, p2.x); x++)
-			points.push({ x, y: Math.round(Y(x)) });
-
-		for (let y = Math.round(Math.min(p1.y, p2.y)); y <= Math.max(p1.y, p2.y); y++)
-			pointsY.push({ x: Math.round(X(y)), y });
-
-		if (pointsY.length == 0)
-			return points;
-
-		let lastXI = 0;
-		const lastXLargestInY = pointsY[pointsY.length - 1].x > pointsY[0].x;
-		for (let i = 0; i < pointsY.length; i++)
-		{
-			const p = pointsY[lastXLargestInY ? i : pointsY.length - i - 1];
-			if (points[lastXI]?.x < p.x)
-			{
-				for (let j = lastXI; j < points.length; j++)
-				{
-					if (points[j].x >= p.x)
-					{
-						lastXI = j;
-						break;
-					}
-				}
-			}
-			let notExist = true;
-			if (points[lastXI]?.x == p.x)
-			{
-				for (let j = lastXI; j < points.length; j++)
-				{
-					if (points[j].x > p.x)
-						break;
-					else
-						if (points[j].y == p.y)
-						{
-							notExist = false;
-							break;
-						}
-				}
-			}
-			if (notExist)
-				points.push(p);
-		}
-
-		return points;
+		p1.x = Math.round(p1.x);
+		p2.x = Math.round(p2.x);
+		p1.y = Math.round(p1.y);
+		p2.y = Math.round(p2.y);
+		return plotLine(p1.x, p1.y, p2.x, p2.y);
 	}
 
 	private lineToIndexes(line: Point[])
@@ -281,6 +235,37 @@ function randomInt(min: number, max: number)
 async function waitNextFrame()
 {
 	return new Promise(res => setTimeout(res, 0));
+}
+
+function plotLine(x0: number, y0: number, x1: number, y1: number)
+{
+	let dx = Math.abs(x1 - x0);
+	let sx = x0 < x1 ? 1 : -1;
+	let dy = -Math.abs(y1 - y0);
+	let sy = y0 < y1 ? 1 : -1;
+	let error = dx + dy;
+
+	const points: { x: number; y: number }[] = [];
+	while (true)
+	{
+		points.push({ x: x0, y: y0 });
+		if (x0 == x1 && y0 == y1)
+			break;
+		let e2 = 2 * error;
+		if (e2 >= dy)
+		{
+			if (x0 == x1) break;
+			error += dy;
+			x0 += sx;
+		}
+		if (e2 <= dx)
+		{
+			if (y0 == y1) break;
+			error += dx;
+			y0 += sy;
+		}
+	}
+	return points;
 }
 
 interface Line
