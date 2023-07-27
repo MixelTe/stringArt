@@ -82,7 +82,7 @@ canvas {
 	box-shadow: 0px 0px 0px 0px #000000a8;
 	transition: left 150ms, box-shadow 150ms;
 }
-.log::before {
+.log::before, .gh_link {
 	content: "</>";
 	font-size: 16px;
 	position: fixed;
@@ -138,6 +138,21 @@ canvas {
 }
 .log::-webkit-scrollbar-corner {
 	background-color: aqua;
+}
+
+.gh_link {
+	z-index: 2;
+	left: 64px;
+	box-shadow: 0 0 0 0 white;
+	transition: box-shadow 250ms;
+	cursor: pointer;
+}
+.gh_link:hover {
+	box-shadow: 0 0 1px 2px white;
+}
+.gh_link img {
+	width: 60%;
+	height: 60%;
 }
 
 #selectImg {
