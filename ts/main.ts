@@ -52,14 +52,34 @@ inp_stopOnZero.addEventListener("change", () => controlObj.stopOnZero = inp_stop
 const inp_imgfile = Lib.get.input("imgfile");
 inp_imgfile.addEventListener("change", loadCustomImg);
 
+const startValues = {
+	pointsCount: 96,
+	pointsOffset: 16,
+	linesCount: 99999,
+	lineA: 16,
+	sizeMul: 1,
+	contrast: 0.05,
+	animSkipSteps: 0,
+}
 
-inp_pointsCount.value = "100";
-inp_pointsOffset.value = "10";
-inp_linesCount.value = "50000";
-inp_lineA.value = "25";
-inp_sizeMul.value = "1";
-inp_contrast.value = "0.05";
-inp_animSkipSteps.value = "0";
+const testing = true;
+const testingValues = {
+	pointsCount: 256,
+	pointsOffset: 16,
+	linesCount: 2048,
+	lineA: 8,
+	sizeMul: 1,
+	contrast: 0.05,
+	animSkipSteps: 99999,
+}
+
+inp_pointsCount.value = `${startValues.pointsCount}`;
+// inp_pointsOffset.value = `${startValues.pointsOffset}`;
+inp_linesCount.value = `${startValues.linesCount}`;
+inp_lineA.value = `${startValues.lineA}`;
+inp_sizeMul.value = `${startValues.sizeMul}`;
+inp_contrast.value = `${startValues.contrast}`;
+inp_animSkipSteps.value = `${startValues.animSkipSteps}`;
 inp_stopOnZero.checked = true;
 inp_pointsCount_display.innerText = inp_pointsCount.value
 inp_pointsOffset_display.innerText = inp_pointsOffset.value
@@ -124,8 +144,9 @@ async function draw()
 	ctx.translate(canvasTranslate.x, canvasTranslate.y);
 
 	controlObj = { stop: false, animSkipSteps: controlObj.animSkipSteps, stopOnZero: controlObj.stopOnZero, animateLine };
+	if (testing) controlObj.animSkipSteps = testingValues.animSkipSteps;
 	const ts = new Date();
-	await new Painter(ctx, img, controlObj, {
+	await new Painter(ctx, img, controlObj, testing ? testingValues : {
 		pointsCount: inp_pointsCount.valueAsNumber,
 		pointsOffset: inp_pointsOffset.valueAsNumber,
 		linesCount: inp_linesCount.valueAsNumber,

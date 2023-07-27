@@ -30,6 +30,7 @@ export class Painter
 		this.drawFrame();
 		this.drawCircle();
 
+		await waitNextFrame();
 		await this.drawLines();
 	}
 
@@ -245,22 +246,17 @@ export class Painter
 
 	private async drawPixels(pixels: Point[], anim = true)
 	{
-		return new Promise(res =>
+		this.ctx.save();
+		this.ctx.globalAlpha = this.LineA / 255;
+		this.ctx.fillStyle = "black";
+		for (let i = 0; i < pixels.length; i++)
 		{
-			this.ctx.save();
-			this.ctx.globalAlpha = this.LineA / 255;
-			this.ctx.fillStyle = "black";
-			for (let i = 0; i < pixels.length; i++)
-			{
-				const pixel = pixels[i];
-				this.ctx.fillRect(pixel.x, pixel.y, 1, 1);
-			}
-			this.ctx.restore();
-			if (anim)
-				setTimeout(res, 0);
-			else
-				res(null);
-		})
+			const pixel = pixels[i];
+			this.ctx.fillRect(pixel.x, pixel.y, 1, 1);
+		}
+		this.ctx.restore();
+
+		if (anim) await waitNextFrame();
 	}
 }
 
@@ -281,6 +277,10 @@ function getPointAtCircle(a: number, r: number, dx = 0, dy = 0)
 function randomInt(min: number, max: number)
 {
 	return Math.floor(Math.random() * (min - max)) + max;
+}
+async function waitNextFrame()
+{
+	return new Promise(res => setTimeout(res, 0));
 }
 
 interface Line
