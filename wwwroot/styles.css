@@ -179,6 +179,9 @@ canvas {
 #lineAnim2 {
 	background-color: orange;
 }
+#lineAnim3 {
+	background-color: purple;
+}
 
 .input div:last-child {
 	display: grid;

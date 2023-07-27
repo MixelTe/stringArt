@@ -54,6 +54,20 @@ inp_animSkipSteps.addEventListener("change", () => controlObj.animSkipSteps = in
 const inp_stopOnZero = Lib.get.input("stopOnZero");
 inp_stopOnZero.addEventListener("change", () => controlObj.stopOnZero = inp_stopOnZero.checked);
 
+const inp_anim = Lib.get.input("anim");
+inp_anim.addEventListener("change", () =>
+{
+	controlObj.fullAnim = inp_anim.checked;
+	inp_animSkipSteps.max = controlObj.fullAnim ? "16" : "32";
+
+	const past = controlObj.animSkipSteps;
+	controlObj.animSkipSteps = animSkipSteps_past;
+	inp_animSkipSteps.valueAsNumber = animSkipSteps_past;
+	inp_animSkipSteps_display.innerText = inp_animSkipSteps.value;
+	animSkipSteps_past = past;
+});
+let animSkipSteps_past = 0;
+
 const inp_imgfile = Lib.get.input("imgfile");
 inp_imgfile.addEventListener("change", loadCustomImg);
 
@@ -65,7 +79,8 @@ const startValues = {
 	sizeMul: 1,
 	contrast: 0.05,
 	lightness: 0.05,
-	animSkipSteps: 0,
+	animSkipSteps: 4,
+	fullAnim: true,
 }
 
 const testing = false;
@@ -78,6 +93,7 @@ const testingValues = {
 	contrast: 0.05,
 	lightness: 0.05,
 	animSkipSteps: 99999,
+	fullAnim: false,
 }
 
 inp_pointsCount.value = `${startValues.pointsCount}`;
@@ -89,6 +105,7 @@ inp_contrast.value = `${startValues.contrast}`;
 inp_lightness.value = `${startValues.lightness}`;
 inp_animSkipSteps.value = `${startValues.animSkipSteps}`;
 inp_stopOnZero.checked = true;
+inp_anim.checked = startValues.fullAnim;
 inp_pointsCount_display.innerText = inp_pointsCount.value;
 inp_pointsOffset_display.innerText = inp_pointsOffset.value;
 inp_linesCount_display.innerText = inp_linesCount.value;
@@ -127,7 +144,7 @@ imgSelect.addEventListener("change", () => { useCustomImg = false; draw(); });
 const currentImage = Lib.get.canvas("currentImage");
 const currentImageCtx = Lib.canvas.getContext2d(currentImage);
 
-let controlObj = { stop: true, animSkipSteps: 0, stopOnZero: true, animateLine };
+let controlObj = { stop: true, animSkipSteps: startValues.animSkipSteps, fullAnim: false, stopOnZero: true, animateLine, animatePen };
 let canvasTranslate = { x: 0, y: 0 };
 
 async function draw()
@@ -152,8 +169,9 @@ async function draw()
 	canvasTranslate = { x: (w - img.width) / 2, y: (h - img.height) / 2 };
 	ctx.translate(canvasTranslate.x, canvasTranslate.y);
 
-	controlObj = { stop: false, animSkipSteps: controlObj.animSkipSteps, stopOnZero: controlObj.stopOnZero, animateLine };
+	controlObj = { stop: false, animSkipSteps: controlObj.animSkipSteps, fullAnim: inp_anim.checked, stopOnZero: controlObj.stopOnZero, animateLine, animatePen };
 	if (testing) controlObj.animSkipSteps = testingValues.animSkipSteps;
+	if (testing) controlObj.fullAnim = testingValues.fullAnim;
 	const ts = new Date();
 	await new Painter(ctx, img, controlObj, testing ? testingValues : {
 		pointsCount: inp_pointsCount.valueAsNumber,
@@ -167,13 +185,21 @@ async function draw()
 
 const lineAnim1 = Lib.get.div("lineAnim1");
 const lineAnim2 = Lib.get.div("lineAnim2");
+const lineAnim3 = Lib.get.div("lineAnim3");
 
 function animateLine(s: Point, e: Point)
 {
-	lineAnim1.style.left = `${s.x + canvasTranslate.x}px`
-	lineAnim1.style.top = `${s.y + canvasTranslate.y}px`
-	lineAnim2.style.left = `${e.x + canvasTranslate.x}px`
-	lineAnim2.style.top = `${e.y + canvasTranslate.y}px`
+	lineAnim1.style.left = `${s.x + canvasTranslate.x}px`;
+	lineAnim1.style.top = `${s.y + canvasTranslate.y}px`;
+	lineAnim2.style.left = `${e.x + canvasTranslate.x}px`;
+	lineAnim2.style.top = `${e.y + canvasTranslate.y}px`;
+}
+function animatePen(p: Point)
+{
+	lineAnim3.style.opacity = "1";
+	lineAnim3.style.left = `${p.x + canvasTranslate.x}px`;
+	lineAnim3.style.top = `${p.y + canvasTranslate.y}px`;
+	setTimeout(() => lineAnim3.style.opacity = "0", 0);
 }
 
 function loadImgs()

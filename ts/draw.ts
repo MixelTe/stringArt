@@ -107,13 +107,13 @@ export class Painter
 			});
 			const animSkipSteps = this.controlObj.animSkipSteps ?? 0;
 			const anim = animSkipSteps == 0 || c % animSkipSteps == 0;
-			await this.drawPixels(bestPoints, anim);
-			if (anim)
+			if (this.controlObj.fullAnim || anim)
 			{
 				const pf = this.getPointAtCircle(bestLine.f, 1.1);
 				const pt = this.getPointAtCircle(bestLine.t, 1.1);
 				this.controlObj.animateLine(pf, pt);
 			}
+			await this.drawPixels(bestPoints, anim);
 			if (this.controlObj.stop)
 			{
 				console.log("Stop!");
@@ -207,6 +207,15 @@ export class Painter
 		{
 			const pixel = pixels[i];
 			this.ctx.fillRect(pixel.x, pixel.y, 1, 1);
+
+			if (this.controlObj.fullAnim)
+			{
+				anim = this.controlObj.animSkipSteps == 0 || i % this.controlObj.animSkipSteps == 0;
+				if (anim) await waitNextFrame();
+				this.controlObj.animatePen(pixel)
+				if (this.controlObj.stop)
+					return;
+			}
 		}
 		this.ctx.restore();
 
@@ -282,8 +291,10 @@ interface ControlObj
 {
 	stop: boolean;
 	stopOnZero: boolean;
+	fullAnim: boolean;
 	animSkipSteps: number;
 	animateLine: (s: Point, e: Point) => void;
+	animatePen: (p: Point) => void;
 }
 interface Settings
 {
