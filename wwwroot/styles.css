@@ -16,7 +16,7 @@ body {
 	height: 100vh;
 	margin-left: 0px;
 	margin-right: 310px;
-	overflow: overlay;
+	overflow: hidden;
 	box-sizing: border-box;
 }
 .canvas > div {
@@ -60,7 +60,7 @@ canvas {
 }
 .log {
 	z-index: 4;
-	left: -280px;
+	left: -100%;
 	bottom: 0;
 	top: 0;
 	position: fixed;
@@ -236,7 +236,7 @@ input[type="range"]::-moz-range-thumb, .rangeInput::-moz-range-thumb {
 	display: grid;
 	gap: 8px 16px;
 }
-@media screen and (max-height: 770px) {
+@media screen and (max-height: 630px) {
 	.bar {
 		width: 400px;
 	}
@@ -292,4 +292,8 @@ input[type="range"]::-moz-range-thumb, .rangeInput::-moz-range-thumb {
 	width: fit-content;
 	height: fit-content;
 	border-radius: 8px;
+}
+
+.hide {
+	display: none;
 }

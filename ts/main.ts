@@ -55,7 +55,7 @@ inp_imgfile.addEventListener("change", loadCustomImg);
 
 inp_pointsCount.value = "100";
 inp_pointsOffset.value = "10";
-inp_linesCount.value = "500";
+inp_linesCount.value = "50000";
 inp_lineA.value = "25";
 inp_sizeMul.value = "1";
 inp_contrast.value = "0.05";
@@ -105,6 +105,10 @@ async function draw()
 {
 	if (!controlObj.stop) controlObj.stop = true;
 	if (!imgsLoaded) return;
+
+	inp_pointsOffset.valueAsNumber = inp_pointsCount.valueAsNumber * 0.1;
+	inp_pointsOffset_display.innerText = inp_pointsOffset.value
+
 	Lib.canvas.fitToParent.ClientWH(canvas);
 	let img = useCustomImg && customImg ? customImg : imgs[parseInt(imgSelect.value, 10)];
 	img = await applyFilterToImage(img);
