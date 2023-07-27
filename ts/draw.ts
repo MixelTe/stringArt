@@ -30,8 +30,7 @@ export class Painter
 		this.drawFrame();
 		this.drawCircle();
 
-		await this.genLines();
-		// this.drawLines(lines);
+		await this.drawLines();
 	}
 
 	private drawFrame()
@@ -52,28 +51,12 @@ export class Painter
 		}
 	}
 
-	private drawLines(lines: Line[])
-	{
-		this.ctx.strokeStyle = "black";
-		this.ctx.globalAlpha = this.LineA / 255;
-		this.ctx.lineWidth = 1;
-		for (let i = 0; i < lines.length; i++)
-		{
-			const line = lines[i];
-			const { x: fx, y: fy } = this.getPointAtCircle(line.f);
-			const { x: tx, y: ty } = this.getPointAtCircle(line.t);
-			this.ctx.beginPath();
-			this.ctx.moveTo(fx, fy);
-			this.ctx.lineTo(tx, ty);
-			this.ctx.stroke();
-		}
-	}
 	private getPointAtCircle(i: number, rmul = 1)
 	{
 		return getPointAtCircle(this.circleStep * i, this.circleR * rmul, this.width / 2, this.height / 2);
 	}
 
-	private async genLines()
+	private async drawLines()
 	{
 		const data = this.getImgData();
 		const dataCur = new Uint8ClampedArray(data.length);
@@ -133,7 +116,7 @@ export class Painter
 				return;
 			}
 		}
-		console.log(c);
+		console.log("Lines:", c);
 	}
 
 	private createLine(f: number, t: number)

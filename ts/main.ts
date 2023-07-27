@@ -94,9 +94,8 @@ const currentImageCtx = Lib.canvas.getContext2d(currentImage);
 let controlObj = { stop: true, animSkipSteps: 0, stopOnZero: true, animateLine };
 let canvasTranslate = { x: 0, y: 0 };
 
-function draw()
+async function draw()
 {
-	clearLog();
 	if (!controlObj.stop) controlObj.stop = true;
 	if (!imgsLoaded) return;
 	Lib.canvas.fitToParent.ClientWH(canvas);
@@ -113,13 +112,15 @@ function draw()
 	ctx.translate(canvasTranslate.x, canvasTranslate.y);
 
 	controlObj = { stop: false, animSkipSteps: controlObj.animSkipSteps, stopOnZero: controlObj.stopOnZero, animateLine };
-	new Painter(ctx, img, controlObj, {
+	const ts = new Date();
+	await new Painter(ctx, img, controlObj, {
 		pointsCount: inp_pointsCount.valueAsNumber,
 		pointsOffset: inp_pointsOffset.valueAsNumber,
 		linesCount: inp_linesCount.valueAsNumber,
 		lineA: inp_lineA.valueAsNumber,
 		sizeMul: inp_sizeMul.valueAsNumber,
 	}).draw();
+	console.log("Time:", +new Date() - +ts, "ms");
 }
 
 const lineAnim1 = Lib.get.div("lineAnim1");
